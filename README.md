@@ -17,6 +17,7 @@
 
 - **기계가 넣은 입력을 거르지 못할 수 있습니다.** `intent-capture`는 사람이 넣은 입력만 의도로 인정하려고 hook 입력의 `source`를 봅니다. 그런데 Claude Code 2.1.311에서는 `-p` 실행과 대화형 입력창 모두 이 값이 비어 있었고, 값이 없으면 사람의 입력으로 봅니다. 그래서 작업 알림 같은 기계가 넣은 턴이 `why:`로 시작하면 의도로 기록될 수 있습니다. Claude Code가 `source`를 보내면 그대로 걸러집니다.
   - 실제 사례: 백그라운드 에이전트가 결과를 돌려줄 때 Claude Code가 넣는 `<agent-message …>` 턴이 `source: null`인 `prompt` 줄로 기록됩니다. 기록은 들어온 사실 그대로 두고, 무엇을 "사람의 입력"으로 셀지는 `/ledger`에서 정합니다.
+- **`Bash`로 바꾼 파일은 `edit` 줄에 남지 않습니다.** `edit-capture`는 `Write`, `Edit`, `NotebookEdit` 호출만 봅니다. 이때 AI의 마지막 응답(`turn-close`의 `last_message`)에는 바꿨다는 말이 있어도 `edit` 줄은 없을 수 있습니다.
 - **guard는 `Write`와 `Edit`만 봅니다** (예정). `Bash`로 기록 파일에 직접 쓰는 우회는 막지 못합니다.
 
 ## 출처

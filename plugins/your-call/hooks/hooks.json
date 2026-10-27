@@ -56,6 +56,25 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/agent-capture.js\""
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/edit-capture.js\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/turn-close.js\""
+          }
+        ]
       }
     ],
     "UserPromptExpansion": [

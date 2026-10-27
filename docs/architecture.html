@@ -117,9 +117,9 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">1단계 기록 · 기록 hook 9개 ✓ (ledger-open, prompt, intent, interrupt, choice, skill, agent, edit, turn-close)</div>
+      <div class="now">1단계 기록 완료 · hook 10개(기록 9 + ledger-guard) · 스킬 2개(/declare, /ledger) · 0.1.0 공개</div>
       <div class="k">다음 작업</div>
-      <div><code>ledger-guard</code>. 첫 guard. AI가 기록 파일을 쓰려 하면 막는다(P2, P7).</div>
+      <div>2단계 스펙. 통과 기준(케이스 목록)은 사람이 확정하고 테스트는 AI가 쓴다(P13, P14). <code>/spec</code>, <code>case-capture</code>, <code>spec-guard</code>, <code>case-coverage</code>.</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
@@ -144,10 +144,10 @@ tr.later td { color: var(--muted); }
           <rect class="bx-strong" x="10" y="56" width="136" height="72" rx="5"/>
           <text x="22" y="84" class="ttl">0 원칙 ✓</text><text x="22" y="106" class="sub">PRINCIPLES.md</text>
 
-          <rect class="bx-h" x="166" y="56" width="136" height="72" rx="5"/>
-          <text x="178" y="84" class="ttl">1 기록</text><text x="178" y="106" class="sub">사실대로 남는다</text>
+          <rect class="bx-strong" x="166" y="56" width="136" height="72" rx="5"/>
+          <text x="178" y="84" class="ttl">1 기록 ✓</text><text x="178" y="106" class="sub">사실대로 남는다</text>
 
-          <rect class="bx" x="322" y="56" width="136" height="72" rx="5"/>
+          <rect class="bx-h" x="322" y="56" width="136" height="72" rx="5"/>
           <text x="334" y="84" class="ttl">2 스펙</text><text x="334" y="106" class="sub">기준은 사람이</text>
 
           <rect class="bx-later" x="478" y="56" width="136" height="72" rx="5"/>
@@ -165,8 +165,8 @@ tr.later td { color: var(--muted); }
           <line class="ln" x1="614" y1="92" x2="632" y2="92" marker-end="url(#r-a)"/>
           <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
 
-          <polygon class="h" points="234,138 227,151 241,151"/>
-          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: ledger-guard</text>
+          <polygon class="h" points="390,138 383,151 397,151"/>
+          <text x="390" y="172" text-anchor="middle" class="h" style="font-weight:500">다음: 2단계 스펙</text>
         </svg>
       </div>
       <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>
@@ -459,8 +459,8 @@ sequenceDiagram
     <div class="decide">
       <div><b>MVP 범위 · 결정됨</b><p>1+2단계(기록 + 스펙). 1단계를 먼저 쓸 수 있는 상태로 끝낸 뒤 2단계로 갑니다.</p></div>
       <div><b>hook 실행 언어 · 결정됨</b><p>Node. JS + JSDoc로 쓰고 TypeScript 7.0.2가 strict로 검사만 합니다. 리뷰한 코드가 곧 실행되는 코드이고 빌드가 없습니다.</p></div>
-      <div><b>Bash 우회 쓰기</b><p>guard가 <code>Bash</code> 명령까지 볼지, 알려진 빈틈으로 문서에만 남길지.</p></div>
-      <div><b>Context7 필수 조건의 범위</b><p>개발 규칙으로만 둘지(코드 작성 전에 Context7로 문서 확인, 없으면 작업 중단), 플러그인 자체의 요구 조건으로도 넣을지(<code>SessionStart</code>에서 Context7이 없으면 경고하거나 작업을 막음).</p></div>
+      <div><b>Bash 우회 쓰기 · 결정됨</b><p>알려진 빈틈으로 README에 적어 둡니다. guard는 <code>Write</code>, <code>Edit</code>, <code>NotebookEdit</code>만 봅니다.</p></div>
+      <div><b>Context7 필수 조건의 범위 · 결정됨</b><p>개발 규칙으로만 둡니다. 코드 작성 전에 Context7로 문서를 확인하고, 없으면 작업을 멈춥니다(<code>CLAUDE.md</code>).</p></div>
     </div>
   </section>
 

@@ -117,9 +117,9 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">0단계 원칙 완료 → 1단계 기록의 첫 작업 준비</div>
+      <div class="now">1단계 기록 · 골격 ✓ · 개발 환경 ✓ (JS + JSDoc, TS 7.0.2 검사, node --test)</div>
       <div class="k">다음 작업</div>
-      <div>플러그인 골격(<code>plugin.json</code>, <code>marketplace.json</code>, <code>CLAUDE.md</code>)과 기록 파일 포맷. 모든 hook이 이 포맷으로만 이어진다(P11).</div>
+      <div>기록 파일 포맷과 첫 hook <code>ledger-open</code>. 모든 hook이 이 포맷으로만 이어진다(P11).</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
@@ -165,7 +165,7 @@ tr.later td { color: var(--muted); }
           <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
 
           <polygon class="h" points="234,138 227,151 241,151"/>
-          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: 골격 + 기록 포맷</text>
+          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: 기록 포맷 + ledger-open</text>
         </svg>
       </div>
       <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>
@@ -454,8 +454,8 @@ sequenceDiagram
   <section class="prose">
     <div><div class="eyebrow">8 · 결정 필요</div><h2>다음 작업 전에 정할 것</h2></div>
     <div class="decide">
-      <div><b>MVP 범위</b><p>1단계(기록)만 할지, 1+2단계(기록 + 스펙)로 할지. 제안은 1+2단계이고, 1단계를 먼저 쓸 수 있는 상태로 끝낸 뒤 2단계로 갑니다.</p></div>
-      <div><b>hook 실행 언어</b><p>bash + jq, Node, Python 중 하나. 설치된 환경에 따라 플러그인을 설치해도 동작하지 않을 수 있어서 골격 단계에서 정합니다.</p></div>
+      <div><b>MVP 범위 · 결정됨</b><p>1+2단계(기록 + 스펙). 1단계를 먼저 쓸 수 있는 상태로 끝낸 뒤 2단계로 갑니다.</p></div>
+      <div><b>hook 실행 언어 · 결정됨</b><p>Node. JS + JSDoc로 쓰고 TypeScript 7.0.2가 strict로 검사만 합니다. 리뷰한 코드가 곧 실행되는 코드이고 빌드가 없습니다.</p></div>
       <div><b>Bash 우회 쓰기</b><p>guard가 <code>Bash</code> 명령까지 볼지, 알려진 빈틈으로 문서에만 남길지.</p></div>
       <div><b>Context7 필수 조건의 범위</b><p>개발 규칙으로만 둘지(코드 작성 전에 Context7로 문서 확인, 없으면 작업 중단), 플러그인 자체의 요구 조건으로도 넣을지(<code>SessionStart</code>에서 Context7이 없으면 경고하거나 작업을 막음).</p></div>
     </div>

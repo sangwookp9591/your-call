@@ -1,7 +1,7 @@
 // serves: P1, P11 — 모든 hook이 따르는 기록 계약. 이벤트 하나 = JSONL 한 줄 덧붙이기.
 // 같은 이벤트에 걸린 hook들은 동시에 돌기 때문에, 한 줄을 한 번의 append로 쓴다.
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 export const FORMAT_VERSION = 1;
@@ -37,6 +37,21 @@ export function findProjectDir(startDir) {
   for (let dir = resolve(startDir); ; dir = dirname(dir)) {
     if (existsSync(join(dir, ".your-call", "ledger"))) return dir;
     if (dirname(dir) === dir) return null;
+  }
+}
+
+/**
+ * @param {string} projectDir
+ * @returns {string[]} 기록이 있는 세션 id들
+ */
+export function listSessions(projectDir) {
+  try {
+    return readdirSync(join(projectDir, ".your-call", "ledger"))
+      .filter((name) => name.endsWith(".jsonl"))
+      .map((name) => name.slice(0, -".jsonl".length))
+      .filter((sessionId) => SAFE_SESSION_ID.test(sessionId));
+  } catch {
+    return [];
   }
 }
 

@@ -117,14 +117,15 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">1단계 기록 · 골격 ✓ · 개발 환경 ✓ · 기록 계약(JSONL) ✓ · ledger-open ✓</div>
+      <div class="now">1단계 기록 · 골격 ✓ · 개발 환경 ✓ · 기록 계약(JSONL) ✓ · ledger-open ✓ · prompt-capture ✓ · intent-capture ✓</div>
       <div class="k">다음 작업</div>
-      <div><code>prompt-capture</code>. 처음으로 <code>UserPromptSubmit</code>에 걸리는 hook이며, 같은 이벤트의 hook들이 동시에 덧붙여도 줄이 섞이지 않아야 한다.</div>
+      <div><code>interrupt-capture</code>. 사람이 AI를 멈춘 지점을 ⚑개입으로 남긴다(P10).</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
           <li>hook이 매 프롬프트마다 돈다. 일이 하나뿐이고 파일에 덧붙이기만 하므로 지연은 작아야 한다. 단계마다 실측한다.</li>
           <li>guard는 <code>Write</code>/<code>Edit</code>만 본다. <code>Bash</code>로 파일에 쓰는 우회는 막지 못한다.</li>
+          <li>Claude Code가 hook 입력의 <code>source</code>를 비워 보내는 동안에는(2.1.311 <code>-p</code>에서 확인), 기계가 넣은 턴을 사람의 의도와 구분하지 못한다. 알려진 빈틈으로 README에 적어 둔다.</li>
           <li><code>why:</code>를 잊으면 의도 칸이 비어 남는다. 일부러 그렇게 둔다. 빈 칸이 리뷰의 질문이 된다(P10).</li>
         </ul>
       </div>
@@ -165,7 +166,7 @@ tr.later td { color: var(--muted); }
           <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
 
           <polygon class="h" points="234,138 227,151 241,151"/>
-          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: prompt-capture</text>
+          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: interrupt-capture</text>
         </svg>
       </div>
       <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>

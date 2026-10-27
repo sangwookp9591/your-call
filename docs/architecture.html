@@ -117,9 +117,9 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">1단계 기록 · 골격 ✓ · 개발 환경 ✓ (JS + JSDoc, TS 7.0.2 검사, node --test)</div>
+      <div class="now">1단계 기록 · 골격 ✓ · 개발 환경 ✓ · 기록 계약(JSONL) ✓ · ledger-open ✓</div>
       <div class="k">다음 작업</div>
-      <div>기록 파일 포맷과 첫 hook <code>ledger-open</code>. 모든 hook이 이 포맷으로만 이어진다(P11).</div>
+      <div><code>prompt-capture</code>. 처음으로 <code>UserPromptSubmit</code>에 걸리는 hook이며, 같은 이벤트의 hook들이 동시에 덧붙여도 줄이 섞이지 않아야 한다.</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
@@ -165,7 +165,7 @@ tr.later td { color: var(--muted); }
           <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
 
           <polygon class="h" points="234,138 227,151 241,151"/>
-          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: 기록 포맷 + ledger-open</text>
+          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: prompt-capture</text>
         </svg>
       </div>
       <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>

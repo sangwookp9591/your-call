@@ -1,8 +1,8 @@
 // serves: P1, P11 — 모든 hook이 따르는 기록 계약. 이벤트 하나 = JSONL 한 줄 덧붙이기.
 // 같은 이벤트에 걸린 hook들은 동시에 돌기 때문에, 한 줄을 한 번의 append로 쓴다.
 
-import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 
 export const FORMAT_VERSION = 1;
 
@@ -26,6 +26,41 @@ export function appendEvent(projectDir, sessionId, entry) {
   const line = JSON.stringify({ v: FORMAT_VERSION, ts: new Date().toISOString(), session_id: sessionId, ...entry });
   appendFileSync(join(ledgerDir, `${sessionId}.jsonl`), `${line}\n`);
   return true;
+}
+
+/**
+ * 스킬처럼 $CLAUDE_PROJECT_DIR을 받지 못하는 쪽이 기록 폴더를 찾는다. 현재 폴더에서 위로 올라간다.
+ * @param {string} startDir
+ * @returns {string | null} 기록 폴더가 있는 프로젝트 폴더
+ */
+export function findProjectDir(startDir) {
+  for (let dir = resolve(startDir); ; dir = dirname(dir)) {
+    if (existsSync(join(dir, ".your-call", "ledger"))) return dir;
+    if (dirname(dir) === dir) return null;
+  }
+}
+
+/**
+ * 한 세션의 기록을 읽는다. 해석할 수 없는 줄은 건너뛴다.
+ * @param {string} projectDir
+ * @param {string} sessionId
+ * @returns {Array<Record<string, any>>} 기록 파일이 없거나 session_id가 안전하지 않으면 빈 배열
+ */
+export function readEvents(projectDir, sessionId) {
+  if (!SAFE_SESSION_ID.test(sessionId)) return [];
+  let text;
+  try {
+    text = readFileSync(join(projectDir, ".your-call", "ledger", `${sessionId}.jsonl`), "utf8");
+  } catch {
+    return [];
+  }
+  return text.split("\n").flatMap((line) => {
+    try {
+      return line === "" ? [] : [JSON.parse(line)];
+    } catch {
+      return [];
+    }
+  });
 }
 
 /**

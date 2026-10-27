@@ -5,15 +5,19 @@
 import { readHookInput } from "./hook-input.js";
 import { appendEvent } from "./ledger.js";
 
+/** @typedef {{ event: string, by: string } & Record<string, unknown>} Entry */
+
 /**
- * @param {(input: Record<string, unknown>) => ({ event: string, by: string } & Record<string, unknown>) | null} toEntry
- *   이 입력에서 남길 한 줄. 남길 것이 없으면 null.
+ * @param {(input: Record<string, unknown>, where: { projectDir: string, sessionId: string }) => Entry | Entry[] | null} toEntries
+ *   이 입력에서 남길 줄. 여러 줄이면 배열, 남길 것이 없으면 null.
  */
-export async function capture(toEntry) {
+export async function capture(toEntries) {
   const input = await readHookInput();
   const projectDir = process.env.CLAUDE_PROJECT_DIR;
-  if (!input.ok || !projectDir || typeof input.value.session_id !== "string") return;
+  const sessionId = input.ok ? input.value.session_id : undefined;
+  if (!input.ok || !projectDir || typeof sessionId !== "string") return;
 
-  const entry = toEntry(input.value);
-  if (entry) appendEvent(projectDir, input.value.session_id, entry);
+  for (const entry of [toEntries(input.value, { projectDir, sessionId }) ?? []].flat()) {
+    appendEvent(projectDir, sessionId, entry);
+  }
 }

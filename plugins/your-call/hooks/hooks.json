@@ -1,0 +1,15 @@
+{
+  "description": "your-call: 결정을 대화 밖에 사실대로 남긴다",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/ledger-open.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

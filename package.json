@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node --test \"test/*.test.js\""
+    "test": "node --test \"test/*.test.js\"",
+    "test:e2e": "node --test \"test/e2e/*.test.js\""
   },
   "devDependencies": {
     "@types/node": "22.20.5",

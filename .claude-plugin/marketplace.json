@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "your-call",
+  "description": "It's your call. 판단과 책임은 사람에게, 기록과 검사는 hook에게.",
+  "owner": {
+    "name": "sangwookp9591"
+  },
+  "plugins": [
+    {
+      "name": "your-call",
+      "description": "결정을 대화 밖에 사실대로 남기고, 의도와 통과 기준은 사람이 정하게 하는 플러그인",
+      "source": "./plugins/your-call",
+      "category": "productivity"
+    }
+  ]
+}

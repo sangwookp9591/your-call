@@ -1,0 +1,464 @@
+<title>your-call 설계도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 설계 도면 한 장: 좁은 본문 열, 도면은 열 밖으로 넓게. 파랑 = 사람 소유, 빨강 = 차단, 점선 = 이후 단계 */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --fg: #151a22;
+  --muted: #5a6474;
+  --line: #c6ccd7;
+  --human: #2348c4;
+  --human-bg: #e7edfc;
+  --block: #c0342a;
+  --later: #98a1ae;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141a; --surface: #171c25; --fg: #e5e9f0; --muted: #98a2b3; --line: #343c4a;
+    --human: #86a6ff; --human-bg: #1b2642; --block: #ff7d70; --later: #5d6677;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141a; --surface: #171c25; --fg: #e5e9f0; --muted: #98a2b3; --line: #343c4a;
+  --human: #86a6ff; --human-bg: #1b2642; --block: #ff7d70; --later: #5d6677;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 48px; }
+.prose { max-width: 680px; }
+h1 { font-size: 30px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 19px; margin: 0 0 4px; text-wrap: balance; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); margin: 0; }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+section { display: grid; gap: 14px; }
+
+/* 현재 위치 */
+.where { display: grid; grid-template-columns: 9.5em 1fr; border-top: 1px solid var(--line); }
+.where > div { padding: 10px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.where .k { color: var(--muted); font-size: 13px; padding-top: 12px; }
+.where .now { color: var(--human); font-weight: 500; }
+.where ul { margin: 0; padding-left: 1.1em; }
+@media (max-width: 560px) { .where { grid-template-columns: 1fr; } .where .k { border-bottom: 0; padding-bottom: 0; } }
+
+/* 도면 */
+figure { margin: 0; display: grid; gap: 10px; }
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; overflow-x: auto; }
+.sheet svg { display: block; width: 100%; height: auto; min-width: 720px; color: var(--fg); }
+.sheet pre.mermaid { margin: 0; min-width: 720px; background: transparent; }
+figcaption { color: var(--muted); font-size: 13.5px; max-width: 680px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 0; vertical-align: middle; margin-right: 6px; border-top: 2px solid var(--fg); }
+.legend .h::before { border-color: var(--human); }
+.legend .b::before { border-color: var(--block); border-top-style: dashed; }
+.legend .s2::before { border-top-style: dotted; }
+.legend .l::before { border-color: var(--later); border-top-style: dashed; }
+
+svg text { fill: var(--fg); font-family: var(--font-body); font-size: 13px; }
+svg .ttl { font-weight: 700; font-size: 14px; }
+svg .sub { fill: var(--muted); font-size: 11.5px; }
+svg .role { fill: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.04em; }
+svg .bx { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+svg .bx-strong { fill: var(--surface); stroke: var(--fg); stroke-width: 1.4; }
+svg .bx-h { fill: var(--human-bg); stroke: var(--human); stroke-width: 1.6; }
+svg .bx-g { fill: var(--surface); stroke: var(--block); stroke-width: 1.6; }
+svg .bx-later { fill: none; stroke: var(--later); stroke-width: 1.2; stroke-dasharray: 5 4; }
+svg .later { fill: var(--later); }
+svg .h { fill: var(--human); }
+svg .ln { fill: none; stroke: var(--fg); stroke-width: 1.3; }
+svg .ln-h { fill: none; stroke: var(--human); stroke-width: 1.6; stroke-dasharray: 6 4; }
+svg .ln-b { fill: none; stroke: var(--block); stroke-width: 1.5; stroke-dasharray: 5 4; }
+svg .mk { fill: var(--fg); }
+svg .mk-h { fill: var(--human); }
+svg .x { stroke: var(--block); stroke-width: 2.2; }
+svg .xt { fill: var(--block); font-size: 11.5px; font-weight: 500; }
+
+/* 표 */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 680px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+td.mono, td code { white-space: nowrap; }
+.pill { display: inline-block; font-family: var(--font-mono); font-size: 11px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.pill.h { color: var(--human); border-color: var(--human); }
+.pill.b { color: var(--block); border-color: var(--block); }
+tr.st2 td:first-child { border-left: 3px dotted var(--line); }
+tr.later td { color: var(--muted); }
+
+.decide { display: grid; gap: 10px; counter-reset: q; }
+.decide > div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; }
+.decide b { display: block; }
+.decide p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+</style>
+
+<div class="wrap">
+
+  <header class="prose">
+    <div class="eyebrow">your-call · 설계도 v0</div>
+    <h1>your-call 설계도</h1>
+    <p class="lede">It's your call. 판단과 책임은 사람에게, 기록과 검사는 hook에게.</p>
+  </header>
+
+  <section class="prose" aria-label="현재 위치">
+    <div class="where">
+      <div class="k">최종 목적지</div>
+      <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
+      <div class="k">지금 단계</div>
+      <div class="now">0단계 원칙 완료 → 1단계 기록의 첫 작업 준비</div>
+      <div class="k">다음 작업</div>
+      <div>플러그인 골격(<code>plugin.json</code>, <code>marketplace.json</code>, <code>CLAUDE.md</code>)과 기록 파일 포맷. 모든 hook이 이 포맷으로만 이어진다(P11).</div>
+      <div class="k">이 방향이 초래할 수 있는 것</div>
+      <div>
+        <ul>
+          <li>hook이 매 프롬프트마다 돈다. 일이 하나뿐이고 파일에 덧붙이기만 하므로 지연은 작아야 한다. 단계마다 실측한다.</li>
+          <li>guard는 <code>Write</code>/<code>Edit</code>만 본다. <code>Bash</code>로 파일에 쓰는 우회는 막지 못한다.</li>
+          <li><code>why:</code>를 잊으면 의도 칸이 비어 남는다. 일부러 그렇게 둔다. 빈 칸이 리뷰의 질문이 된다(P10).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">1 · 로드맵</div><h2>목적지까지의 단계</h2></div>
+    <figure>
+      <div class="sheet">
+        <svg viewBox="0 0 940 190" role="img" aria-label="0단계 원칙은 완료, 지금은 1단계 기록. MVP는 1단계 기록과 2단계 스펙. 3 리뷰, 4 승격, 5 팀과 계약이 이후 단계.">
+          <defs><marker id="r-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk" d="M0 0L10 5L0 10z"/></marker></defs>
+          <path class="ln" d="M166 46V34H458V46"/>
+          <text x="312" y="24" text-anchor="middle" class="ttl">MVP (제안)</text>
+
+          <rect class="bx-strong" x="10" y="56" width="136" height="72" rx="5"/>
+          <text x="22" y="84" class="ttl">0 원칙 ✓</text><text x="22" y="106" class="sub">PRINCIPLES.md</text>
+
+          <rect class="bx-h" x="166" y="56" width="136" height="72" rx="5"/>
+          <text x="178" y="84" class="ttl">1 기록</text><text x="178" y="106" class="sub">사실대로 남는다</text>
+
+          <rect class="bx" x="322" y="56" width="136" height="72" rx="5"/>
+          <text x="334" y="84" class="ttl">2 스펙</text><text x="334" y="106" class="sub">기준은 사람이</text>
+
+          <rect class="bx-later" x="478" y="56" width="136" height="72" rx="5"/>
+          <text x="490" y="84" class="ttl later">3 리뷰</text><text x="490" y="106" class="sub">과정까지 리뷰</text>
+
+          <rect class="bx-later" x="634" y="56" width="136" height="72" rx="5"/>
+          <text x="646" y="84" class="ttl later">4 승격</text><text x="646" y="106" class="sub">검증된 것만 가이드</text>
+
+          <rect class="bx-later" x="790" y="56" width="136" height="72" rx="5"/>
+          <text x="802" y="84" class="ttl later">5 팀 · 계약</text><text x="802" y="106" class="sub">모이고 지켜진다</text>
+
+          <line class="ln" x1="146" y1="92" x2="164" y2="92" marker-end="url(#r-a)"/>
+          <line class="ln" x1="302" y1="92" x2="320" y2="92" marker-end="url(#r-a)"/>
+          <line class="ln" x1="458" y1="92" x2="476" y2="92" marker-end="url(#r-a)"/>
+          <line class="ln" x1="614" y1="92" x2="632" y2="92" marker-end="url(#r-a)"/>
+          <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
+
+          <polygon class="h" points="234,138 227,151 241,151"/>
+          <text x="234" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: 골격 + 기록 포맷</text>
+        </svg>
+      </div>
+      <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">2 · 핵심 메커니즘</div><h2>두 개의 쓰기 경로</h2></div>
+    <figure>
+      <div class="sheet">
+        <svg viewBox="0 0 1000 290" role="img" aria-label="사람의 말은 capture hook을 거쳐 ledger와 cases 파일에 들어간다. AI의 쓰기는 guard hook이 검사하여 proposals 파일만 통과시키고 ledger와 cases는 차단한다.">
+          <defs>
+            <marker id="w-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk" d="M0 0L10 5L0 10z"/></marker>
+            <marker id="w-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-h" d="M0 0L10 5L0 10z"/></marker>
+          </defs>
+
+          <text x="20" y="22" class="role">사람 쪽</text>
+          <text x="980" y="22" text-anchor="end" class="role">AI 쪽</text>
+
+          <rect class="bx-h" x="20" y="118" width="110" height="64" rx="5"/>
+          <text x="75" y="146" text-anchor="middle" class="ttl">사람</text>
+          <text x="75" y="166" text-anchor="middle" class="sub">입력 · 답변</text>
+          <line class="ln" x1="130" y1="150" x2="188" y2="150" marker-end="url(#w-h)" style="stroke:var(--human)"/>
+
+          <rect class="bx" x="190" y="118" width="180" height="64" rx="5"/>
+          <text x="280" y="146" text-anchor="middle" class="ttl">capture hooks</text>
+          <text x="280" y="166" text-anchor="middle" class="sub">원문 그대로 옮긴다</text>
+
+          <path class="ln" d="M370 132H390V60H406" marker-end="url(#w-a)"/>
+          <path class="ln" d="M370 160H390V150H406" marker-end="url(#w-a)"/>
+
+          <rect class="bx" x="410" y="30" width="180" height="60" rx="5"/>
+          <text x="500" y="56" text-anchor="middle" class="ttl mono" style="font-family:var(--font-mono)">ledger.md</text>
+          <text x="500" y="76" text-anchor="middle" class="sub">입력 · 의도 · 선택 · ⚑개입</text>
+
+          <rect class="bx-h" x="410" y="120" width="180" height="60" rx="5"/>
+          <text x="500" y="146" text-anchor="middle" class="ttl" style="font-family:var(--font-mono)">cases.md</text>
+          <text x="500" y="166" text-anchor="middle" class="sub">사람이 확정한 케이스</text>
+
+          <rect class="bx" x="410" y="210" width="180" height="60" rx="5"/>
+          <text x="500" y="236" text-anchor="middle" class="ttl" style="font-family:var(--font-mono)">proposals.md</text>
+          <text x="500" y="256" text-anchor="middle" class="sub">빠진 케이스 + 근거</text>
+
+          <rect class="bx-g" x="630" y="118" width="190" height="64" rx="5"/>
+          <text x="725" y="146" text-anchor="middle" class="ttl">guard hooks</text>
+          <text x="725" y="166" text-anchor="middle" class="sub">PreToolUse · 경로 검사</text>
+
+          <path class="ln-b" d="M630 130H612V60H600"/>
+          <line class="x" x1="592" y1="53" x2="606" y2="67"/><line class="x" x1="606" y1="53" x2="592" y2="67"/>
+          <text x="618" y="52" class="xt">차단</text>
+          <path class="ln-b" d="M630 150H600"/>
+          <line class="x" x1="592" y1="143" x2="606" y2="157"/><line class="x" x1="606" y1="143" x2="592" y2="157"/>
+          <text x="618" y="142" class="xt">차단</text>
+          <path class="ln" d="M630 166H612V240H594" marker-end="url(#w-a)"/>
+          <text x="618" y="258" class="sub">통과</text>
+
+          <line class="ln" x1="860" y1="150" x2="822" y2="150" marker-end="url(#w-a)"/>
+          <rect class="bx-strong" x="860" y="118" width="120" height="64" rx="5"/>
+          <text x="920" y="146" text-anchor="middle" class="ttl">Claude Code</text>
+          <text x="920" y="166" text-anchor="middle" class="sub">Write · Edit</text>
+        </svg>
+      </div>
+      <figcaption>사람의 말은 hook을 거쳐서만 기록과 확정 케이스에 들어갑니다. AI의 쓰기는 제안 파일까지만 통과합니다. 가이드 문구로 부탁하지 않고 검사로 막습니다(P2, P7, P14).</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">3 · 토폴로지</div><h2>이벤트 → hook → 파일 → 스킬</h2></div>
+    <figure>
+      <div class="sheet">
+<pre class="mermaid">
+flowchart LR
+  H(["사람"]):::human
+  A(["Claude Code"])
+  subgraph EV["Claude Code 이벤트"]
+    direction TB
+    e1["SessionStart"]
+    e2["UserPromptSubmit"]
+    e3["PreToolUse<br/>Write · Edit"]
+    e4["PostToolUse<br/>AskUserQuestion"]
+    e5["PostToolUse<br/>Skill · Agent"]
+    e6["Stop"]
+  end
+  subgraph HK["hook · 일 하나씩"]
+    direction TB
+    h1["ledger-open"]
+    h2["prompt-capture"]
+    h3["intent-capture"]:::human
+    h4["interrupt-capture"]
+    h5["ledger-guard"]:::guard
+    h6["spec-guard"]:::guard2
+    h7["choice-capture"]
+    h8["case-capture"]:::human2
+    h9["skill-capture"]
+    h10["turn-close"]
+  end
+  subgraph FS[".your-call/"]
+    direction TB
+    L[("ledger/세션.md")]
+    C[("spec/작업/cases.md")]:::human2
+    P[("spec/작업/proposals.md")]:::st2
+    G[("guides/")]:::later
+  end
+  subgraph RD["스킬 · 에이전트"]
+    direction TB
+    s1["/declare"]
+    s2["/ledger"]
+    s3["/spec"]:::st2
+    a1["case-coverage 에이전트"]:::st2
+    s4["/pr-context · /candidates · /promote"]:::later
+  end
+  H -->|"입력 · why:"| e2
+  H -->|답변| e4
+  A -->|쓰기 시도| e3
+  e1 --> h1
+  e2 --> h2 & h3 & h4
+  e3 --> h5 & h6
+  e4 --> h7 & h8
+  e5 --> h9
+  e6 --> h10
+  h1 & h2 & h3 & h4 & h7 & h9 & h10 -->|덧붙임| L
+  h8 -->|확정 케이스| C
+  h5 -.-x|AI 쓰기 차단| L
+  h6 -.-x|AI 쓰기 차단| C
+  s3 -->|빠진 케이스 + 근거| P
+  s1 -.->|why: 입력 요청| H
+  L -->|읽기| s2
+  C -->|읽기| a1
+  L -.-> s4
+  s4 -.-> G
+  classDef human stroke:#3b6fe0,stroke-width:2px
+  classDef human2 stroke:#3b6fe0,stroke-width:2px,stroke-dasharray:2 3
+  classDef guard stroke:#d0453a,stroke-width:2px
+  classDef guard2 stroke:#d0453a,stroke-width:2px,stroke-dasharray:2 3
+  classDef st2 stroke-dasharray:2 3
+  classDef later stroke-dasharray:6 4,opacity:0.5
+</pre>
+      </div>
+      <div class="legend"><span class="h">사람의 말이 들어가는 곳</span><span class="b">차단</span><span class="s2">2단계 (스펙)</span><span class="l">3단계 이후</span></div>
+      <figcaption>컴포넌트끼리는 서로 부르지 않고 <code>.your-call/</code> 아래 파일로만 이어집니다(P11). 어긋난 hook 하나만 따로 고치고 다시 돌릴 수 있습니다.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">4 · 한 턴</div><h2>한 턴 동안 기록이 쌓이는 순서</h2></div>
+    <figure>
+      <div class="sheet">
+<pre class="mermaid">
+sequenceDiagram
+  actor H as 사람
+  participant C as Claude Code
+  participant K as hooks
+  participant L as ledger.md
+  H->>C: why: 만료 판정을 서버 시간 기준으로 통일 + 지시
+  C-->>K: UserPromptSubmit
+  K->>L: prompt-capture · 입력 원문
+  K->>L: intent-capture · 의도 칸 (사람의 말)
+  C->>H: AskUserQuestion · A안 / B안
+  H->>C: B안
+  C-->>K: PostToolUse(AskUserQuestion)
+  K->>L: choice-capture · 선택지 A, B / 고른 것 B / 버린 것 A / 이유 비어 있음 ⚑
+  C->>K: PreToolUse · Edit ledger.md 의도 칸
+  K--xC: ledger-guard · 차단
+  C->>K: PreToolUse · Edit src/coupon.ts
+  K-->>C: 통과
+  C-->>K: Stop
+  K->>L: turn-close · 바뀐 파일 목록
+</pre>
+      </div>
+      <figcaption>"B안을 골랐다"는 사실로만 남고 이유 칸은 비어 있습니다. AI가 그 칸을 채우려 하면 막힙니다. 비어 있는 이유는 리뷰에서 사람에게 묻습니다(P2, P10).</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">5 · 작업 방식</div><h2>컴포넌트 하나를 만드는 순서</h2></div>
+    <figure>
+      <div class="sheet">
+        <svg viewBox="0 0 1000 320" role="img" aria-label="대화, 케이스 초안, 사람이 케이스 확정, 테스트, 구현, 검증, 사람이 diff 리뷰 후 커밋. 구현하며 배운 것은 케이스 확정 단계로 되돌린다.">
+          <defs>
+            <marker id="l-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk" d="M0 0L10 5L0 10z"/></marker>
+            <marker id="l-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-h" d="M0 0L10 5L0 10z"/></marker>
+          </defs>
+
+          <rect class="bx" x="20" y="30" width="280" height="70" rx="5"/>
+          <text x="34" y="54" class="ttl">① 대화</text>
+          <text x="34" y="74" class="sub">목적지 · 지금 단계 · 이유 · 영향</text>
+          <text x="34" y="91" class="role">AI가 말하고 사람이 판단</text>
+
+          <rect class="bx" x="340" y="30" width="280" height="70" rx="5"/>
+          <text x="354" y="54" class="ttl">② 케이스 초안</text>
+          <text x="354" y="74" class="sub">빠진 케이스 · 모호한 조건 + 근거</text>
+          <text x="354" y="91" class="role">AI</text>
+
+          <rect class="bx-h" x="660" y="30" width="300" height="70" rx="5"/>
+          <text x="674" y="54" class="ttl">③ 케이스 확정</text>
+          <text x="674" y="74" class="sub">무엇을 만족해야 하는가</text>
+          <text x="674" y="91" class="role h">사람 · 승인 1</text>
+
+          <line class="ln" x1="300" y1="65" x2="338" y2="65" marker-end="url(#l-a)"/>
+          <line class="ln" x1="620" y1="65" x2="658" y2="65" marker-end="url(#l-a)"/>
+
+          <path class="ln" d="M810 100V140H118V188" marker-end="url(#l-a)"/>
+          <text x="464" y="132" text-anchor="middle" class="sub">확정된 문장만 넘어간다</text>
+
+          <rect class="bx" x="20" y="190" width="196" height="70" rx="5"/>
+          <text x="34" y="214" class="ttl">④ 테스트</text>
+          <text x="34" y="234" class="sub">케이스와 하나씩 짝</text>
+          <text x="34" y="251" class="role">AI</text>
+
+          <rect class="bx" x="242" y="190" width="196" height="70" rx="5"/>
+          <text x="256" y="214" class="ttl">⑤ 구현</text>
+          <text x="256" y="234" class="sub">diff를 따라갈 크기</text>
+          <text x="256" y="251" class="role">AI</text>
+
+          <rect class="bx" x="464" y="190" width="196" height="70" rx="5"/>
+          <text x="478" y="214" class="ttl">⑥ 검증</text>
+          <text x="478" y="234" class="sub">테스트 · 별도 컨텍스트</text>
+          <text x="478" y="251" class="role">기계 · 서브에이전트</text>
+
+          <rect class="bx-h" x="686" y="190" width="196" height="70" rx="5"/>
+          <text x="700" y="214" class="ttl">⑦ diff 리뷰</text>
+          <text x="700" y="234" class="sub">케이스 누락 · 이유 확인</text>
+          <text x="700" y="251" class="role h">사람 · 승인 2</text>
+
+          <rect class="bx-strong" x="908" y="205" width="72" height="40" rx="20"/>
+          <text x="944" y="230" text-anchor="middle" class="ttl">커밋</text>
+
+          <line class="ln" x1="216" y1="225" x2="240" y2="225" marker-end="url(#l-a)"/>
+          <line class="ln" x1="438" y1="225" x2="462" y2="225" marker-end="url(#l-a)"/>
+          <line class="ln" x1="660" y1="225" x2="684" y2="225" marker-end="url(#l-a)"/>
+          <line class="ln" x1="882" y1="225" x2="906" y2="225" marker-end="url(#l-a)"/>
+
+          <path class="ln-h" d="M340 260V290H990V65H964" marker-end="url(#l-h)"/>
+          <text x="665" y="310" text-anchor="middle" class="sub h">구현하며 배운 것 → 케이스 목록으로 되돌림 (사람이 다시 확정)</text>
+        </svg>
+      </div>
+      <figcaption>이 저장소도 이 순서로 만듭니다. 통과 기준(③)은 사람이 확정하고, 테스트(④)는 그것을 보고 AI가 씁니다. 사람이 보는 것은 테스트 문법이 아니라 케이스 목록에 빠진 것이 있는지입니다(P13, P14).</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">6 · 소유권</div><h2>누가 무엇을 쓰는가</h2></div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>내용</th><th>쓰는 쪽</th><th>지키는 장치</th></tr></thead>
+        <tbody>
+          <tr><td><code>ledger/&lt;세션&gt;.md</code></td><td>입력 원문, 의도, 선택지·고른 것·버린 것, 스킬, ⚑개입, 바뀐 파일</td><td>hook만. 사람의 말은 원문 그대로</td><td><span class="pill b">ledger-guard</span></td></tr>
+          <tr><td><code>spec/&lt;작업&gt;/cases.md</code></td><td>확정된 케이스 목록</td><td>사람의 답을 hook이 옮김</td><td><span class="pill b">spec-guard</span></td></tr>
+          <tr><td><code>spec/&lt;작업&gt;/proposals.md</code></td><td>빠진 케이스, 모호한 조건과 근거</td><td>AI</td><td>없음 (제안일 뿐)</td></tr>
+          <tr><td>테스트 코드</td><td>케이스와 하나씩 짝지은 테스트</td><td>AI</td><td><span class="pill">case-coverage</span> 가 짝 없는 케이스를 찾음</td></tr>
+          <tr class="later"><td><code>guides/</code></td><td>승격된 가이드 (조건 + 출처 기록 포함)</td><td>사람이 고른 후보만</td><td>4단계에서 정함</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">7 · 컴포넌트</div><h2>컴포넌트와 원칙</h2></div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>컴포넌트</th><th>종류 · 이벤트</th><th>하는 일 하나</th><th>원칙</th><th>단계</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ledger-open</td><td>hook · SessionStart</td><td>세션 기록 파일을 연다</td><td>P1</td><td>1</td></tr>
+          <tr><td class="mono">prompt-capture</td><td>hook · UserPromptSubmit</td><td>입력 원문을 기록한다</td><td>P1</td><td>1</td></tr>
+          <tr><td class="mono">intent-capture</td><td>hook · UserPromptSubmit</td><td><code>why:</code>로 시작하는 사람의 말만 의도 칸에 옮긴다</td><td>P3</td><td>1</td></tr>
+          <tr><td class="mono">interrupt-capture</td><td>hook · UserPromptSubmit</td><td>직전 턴이 중단으로 끝났으면 ⚑개입으로 표시한다</td><td>P10</td><td>1</td></tr>
+          <tr><td class="mono">choice-capture</td><td>hook · PostToolUse(AskUserQuestion)</td><td>선택지, 고른 것, 버린 것을 사실로만 적고 ⚑개입으로 표시한다</td><td>P2 P10</td><td>1</td></tr>
+          <tr><td class="mono">skill-capture</td><td>hook · PostToolUse(Skill, Agent)</td><td>로드한 스킬과 에이전트를 기록한다</td><td>P1</td><td>1</td></tr>
+          <tr><td class="mono">turn-close</td><td>hook · Stop</td><td>이번 턴에 바뀐 파일을 사실로 남긴다</td><td>P1</td><td>1</td></tr>
+          <tr><td class="mono">ledger-guard</td><td>hook · PreToolUse(Write, Edit)</td><td>AI가 기록 파일을 쓰려 하면 막는다</td><td>P2 P7</td><td>1</td></tr>
+          <tr><td class="mono">/declare</td><td>스킬</td><td>의도 칸이 비었으면 사람에게 <code>why:</code> 입력을 요청한다. 대신 쓰지 않는다</td><td>P3</td><td>1</td></tr>
+          <tr><td class="mono">/ledger</td><td>스킬</td><td>기록과 개입률을 보여 준다</td><td>P10</td><td>1</td></tr>
+          <tr class="st2"><td class="mono">case-capture</td><td>hook · PostToolUse(AskUserQuestion)</td><td>사람이 확정한 케이스를 <code>cases.md</code>에 옮긴다</td><td>P14</td><td>2</td></tr>
+          <tr class="st2"><td class="mono">spec-guard</td><td>hook · PreToolUse(Write, Edit)</td><td>AI가 <code>cases.md</code>를 쓰려 하면 막는다</td><td>P14 P7</td><td>2</td></tr>
+          <tr class="st2"><td class="mono">/spec</td><td>스킬</td><td>케이스 초안과 빠진 케이스(근거 포함)를 제안하고 사람의 확정을 받는다</td><td>P13 P9</td><td>2</td></tr>
+          <tr class="st2"><td class="mono">case-coverage</td><td>에이전트</td><td>케이스와 테스트의 짝을 확인하고 짝 없는 케이스를 돌려준다</td><td>P14 P8 P12</td><td>2</td></tr>
+          <tr class="st2"><td class="mono">test-as-doc</td><td>에이전트</td><td>테스트 이름, 도메인 어휘, 설명 없는 숫자를 확인한다</td><td>P14 P9</td><td>2</td></tr>
+          <tr class="later"><td class="mono">/pr-context</td><td>스킬</td><td>PR에 기록 링크와 개입 지점을 넣는다</td><td>P10</td><td>3</td></tr>
+          <tr class="later"><td class="mono">candidate-scout · /candidates · /promote</td><td>에이전트 · 스킬</td><td>후보 추출 → 사람 선택 → 조건과 출처를 붙여 승격</td><td>P4 P5</td><td>4</td></tr>
+          <tr class="later"><td class="mono">independent-reviewer</td><td>에이전트</td><td>지시 매몰과 증거 누락을 별도 컨텍스트에서 평가한다</td><td>P8 P9</td><td>3</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div><div class="eyebrow">8 · 결정 필요</div><h2>다음 작업 전에 정할 것</h2></div>
+    <div class="decide">
+      <div><b>MVP 범위</b><p>1단계(기록)만 할지, 1+2단계(기록 + 스펙)로 할지. 제안은 1+2단계이고, 1단계를 먼저 쓸 수 있는 상태로 끝낸 뒤 2단계로 갑니다.</p></div>
+      <div><b>hook 실행 언어</b><p>bash + jq, Node, Python 중 하나. 설치된 환경에 따라 플러그인을 설치해도 동작하지 않을 수 있어서 골격 단계에서 정합니다.</p></div>
+      <div><b>Bash 우회 쓰기</b><p>guard가 <code>Bash</code> 명령까지 볼지, 알려진 빈틈으로 문서에만 남길지.</p></div>
+      <div><b>Context7 필수 조건의 범위</b><p>개발 규칙으로만 둘지(코드 작성 전에 Context7로 문서 확인, 없으면 작업 중단), 플러그인 자체의 요구 조건으로도 넣을지(<code>SessionStart</code>에서 Context7이 없으면 경고하거나 작업을 막음).</p></div>
+    </div>
+  </section>
+
+</div>

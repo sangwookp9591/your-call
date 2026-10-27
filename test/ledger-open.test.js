@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { chmodSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { makeProjectDir, runHook } from "./helpers.js";
+import { makeProjectDir, readLedger, runHook } from "./helpers.js";
 
 /**
  * @param {string} sessionId
@@ -11,22 +11,13 @@ import { makeProjectDir, runHook } from "./helpers.js";
 const sessionStart = (sessionId, source) =>
   JSON.stringify({ session_id: sessionId, hook_event_name: "SessionStart", source, cwd: "/somewhere/else" });
 
-/**
- * @param {string} projectDir
- * @param {string} sessionId
- */
-function ledgerLines(projectDir, sessionId) {
-  const file = join(projectDir, ".your-call", "ledger", `${sessionId}.jsonl`);
-  return readFileSync(file, "utf8").trimEnd().split("\n").map((line) => JSON.parse(line));
-}
-
 test("L1: 세션이 처음 시작되면 세션 기록 파일을 만들고 session-open 한 줄을 남긴다", () => {
   const projectDir = makeProjectDir();
 
   const run = runHook("ledger-open", { stdin: sessionStart("s-first", "startup"), projectDir });
 
   assert.equal(run.status, 0, run.stderr);
-  const [opened, ...rest] = ledgerLines(projectDir, "s-first");
+  const [opened, ...rest] = readLedger(projectDir, "s-first");
   assert.deepEqual(rest, []);
   assert.equal(opened.v, 1);
   assert.equal(opened.event, "session-open");
@@ -43,7 +34,7 @@ test("L2: 같은 세션이 다시 시작되면 새 파일 없이 같은 파일�
   runHook("ledger-open", { stdin: sessionStart("s-resumed", "resume"), projectDir });
 
   assert.deepEqual(readdirSync(join(projectDir, ".your-call", "ledger")), ["s-resumed.jsonl"]);
-  assert.deepEqual(ledgerLines(projectDir, "s-resumed").map((line) => line.source), ["startup", "resume"]);
+  assert.deepEqual(readLedger(projectDir, "s-resumed").map((line) => line.source), ["startup", "resume"]);
 });
 
 test("L3: 입력이 잘못되었거나 session_id가 없으면 아무것도 만들지 않고 작업을 막지 않는다", () => {
@@ -63,7 +54,7 @@ test("L4: 대화에 들어가지 않도록 stdout에 아무것도 쓰지 않는�
   const run = runHook("ledger-open", { stdin: sessionStart("s-quiet", "startup"), projectDir });
 
   assert.equal(run.status, 0, run.stderr);
-  assert.equal(ledgerLines(projectDir, "s-quiet").length, 1);
+  assert.equal(readLedger(projectDir, "s-quiet").length, 1);
   assert.equal(run.stdout, "");
 });
 
@@ -130,7 +121,7 @@ test("L8: 한 번 실행하는 데 Node 기동을 포함해 200ms를 넘지 않�
     assert.equal(run.status, 0, run.stderr);
   }
 
-  assert.equal(ledgerLines(projectDir, "s-timed").length, 5);
+  assert.equal(readLedger(projectDir, "s-timed").length, 5);
   const median = durations.sort((a, b) => a - b)[2];
   assert.ok(median < 200, `중앙값 ${median.toFixed(0)}ms`);
 });

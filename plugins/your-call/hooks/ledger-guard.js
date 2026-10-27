@@ -21,7 +21,7 @@ const input = await readHookInput();
 const projectDir = process.env.CLAUDE_PROJECT_DIR;
 
 if (input.ok && projectDir) {
-  const { tool_name: tool, tool_input: toolInput, cwd, session_id: sessionId } = input.value;
+  const { tool_name: tool, tool_input: toolInput, cwd, session_id: sessionId, prompt_id: promptId } = input.value;
   const field = PATH_FIELD.get(String(tool));
   const path = field ? /** @type {any} */ (toolInput)?.[field] : undefined;
 
@@ -31,7 +31,7 @@ if (input.ok && projectDir) {
       process.exitCode = 2;
       process.stderr.write(`${REASON}\n`);
       try {
-        if (typeof sessionId === "string") appendEvent(projectDir, sessionId, { event: "blocked", by: "ledger-guard", tool, file_path: path });
+        if (typeof sessionId === "string") appendEvent(projectDir, sessionId, { prompt_id: promptId ?? null, event: "blocked", by: "ledger-guard", tool, file_path: path });
       } catch {
         // 막은 사실을 기록하지 못해도 막는 것은 그대로다.
       }

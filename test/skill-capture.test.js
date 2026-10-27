@@ -33,6 +33,7 @@ test("K1: AI가 Skill 도구로 스킬을 부르면 이름, 인자, 부른 쪽(a
   const [withArgs] = skillsFor(aiLoadedSkill({ skill: "code-review", args: "high 123" }));
   const { v, ts, session_id, ...line } = withArgs;
   assert.deepEqual(line, {
+    prompt_id: null,
     event: "skill",
     by: "skill-capture",
     name: "code-review",
@@ -57,6 +58,7 @@ test("K2: 사람이 /명령으로 부르면 이름, 인자 원문, 출처, 확�
 
   const { v, ts, session_id, ...line } = typed;
   assert.deepEqual(line, {
+    prompt_id: null,
     event: "skill",
     by: "skill-capture",
     name: "review-kit:checklist",

@@ -57,6 +57,7 @@ test("C1: 질문마다 제시된 것, 고른 것, 버린 것, AI의 추천을 �
   assert.equal(choices.length, 2);
   const { v, ts, session_id, ...first } = choices[0];
   assert.deepEqual(first, {
+    prompt_id: null,
     event: "choice",
     by: "choice-capture",
     tool_use_id: "toolu_c",

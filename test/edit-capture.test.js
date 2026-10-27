@@ -43,7 +43,7 @@ test("D1: AI가 Write, Edit, NotebookEdit로 파일을 바꾸면 도구와 파�
 test("D2: 파일 내용이나 바뀐 부분은 기록하지 않는다", () => {
   const [line] = editsFor(edited("Edit", { file_path: "src/coupon.ts", old_string: "비밀 이전 코드", new_string: "비밀 새 코드" }));
 
-  assert.deepEqual(Object.keys(line).sort(), ["by", "event", "file_path", "session_id", "tool", "tool_use_id", "ts", "v"]);
+  assert.deepEqual(Object.keys(line).sort(), ["by", "event", "file_path", "prompt_id", "session_id", "tool", "tool_use_id", "ts", "v"]);
   assert.equal(JSON.stringify(line).includes("비밀"), false);
 });
 

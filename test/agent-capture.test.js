@@ -31,6 +31,7 @@ test("G1: AI가 Agent 도구로 위임하면 설명, 종류, 모델, 위임 원�
   const [recorded] = agentsFor(delegated({ description: "Simplify review: reuse", subagent_type: "Explore", model: "haiku", prompt: brief }));
   const { v, ts, session_id, ...line } = recorded;
   assert.deepEqual(line, {
+    prompt_id: null,
     event: "agent",
     by: "agent-capture",
     description: "Simplify review: reuse",

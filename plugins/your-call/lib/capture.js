@@ -17,7 +17,9 @@ export async function capture(toEntries) {
   const sessionId = input.ok ? input.value.session_id : undefined;
   if (!input.ok || !projectDir || typeof sessionId !== "string") return;
 
+  // prompt_id는 입력 하나와 그 뒤의 모든 이벤트를 다음 입력 전까지 묶는다. /ledger는 이것으로 턴을 묶는다.
+  const promptId = input.value.prompt_id ?? null;
   for (const entry of [toEntries(input.value, { projectDir, sessionId }) ?? []].flat()) {
-    appendEvent(projectDir, sessionId, entry);
+    appendEvent(projectDir, sessionId, { prompt_id: promptId, ...entry });
   }
 }

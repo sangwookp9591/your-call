@@ -1,29 +1,10 @@
 // serves: P2, P10 — 사람이 선택지에서 고른 순간을 사실로만 남긴다: 제시된 것, 고른 것, 버린 것, AI의 추천.
 // 고른 것은 의도가 아니다. 이유 칸(reason)은 비워 두고, AI가 짐작해 채울 칸을 만들지 않는다.
 
+import { splitAnswer } from "../lib/answer.js";
 import { capture } from "../lib/capture.js";
 
 const RECOMMENDED = /\(Recommended\)\s*$/;
-
-/**
- * 답 문자열을 선택지 이름과 맞춰 나눈다. 여러 개 고른 답은 ", "로 이어져 오고, 이름 자체에도 쉼표가 있을 수 있다.
- * 이름과 맞지 않고 남은 부분은 사람이 직접 쓴 답이다.
- * @param {string} answer
- * @param {string[]} labels
- * @returns {{ chosen: string[], otherText: string | null }}
- */
-function splitAnswer(answer, labels) {
-  let rest = `, ${answer}, `;
-  const picked = new Set();
-  for (const label of [...labels].sort((a, b) => b.length - a.length)) {
-    if (rest.includes(`, ${label}, `)) {
-      picked.add(label);
-      rest = rest.replace(`, ${label}, `, ", ");
-    }
-  }
-  const leftover = rest.slice(2, -2);
-  return { chosen: labels.filter((label) => picked.has(label)), otherText: leftover === "" ? null : leftover };
-}
 
 await capture((input) => {
   if (input.tool_name !== "AskUserQuestion") return null;

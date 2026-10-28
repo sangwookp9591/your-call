@@ -18,5 +18,20 @@ export function splitAnswer(answer, labels) {
     }
   }
   const leftover = rest.slice(2, -2);
-  return { chosen: labels.filter((label) => picked.has(label)), otherText: leftover === "" ? null : leftover };
+  return { chosen: labels.filter((label) => picked.has(label)), otherText: leftover === "" ? null : unwrap(leftover) };
+}
+
+/**
+ * multiSelect 질문에서는 직접 쓴 답이 JSON 문자열로 감싸여 온다 (Claude Code 2.1.311에서 확인).
+ * JSON 문자열일 때만 풀고, 그 밖에는 받은 그대로 둔다.
+ * @param {string} text
+ */
+function unwrap(text) {
+  if (!(text.startsWith('"') && text.endsWith('"'))) return text;
+  try {
+    const decoded = JSON.parse(text);
+    return typeof decoded === "string" ? decoded : text;
+  } catch {
+    return text;
+  }
 }

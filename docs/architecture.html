@@ -117,9 +117,9 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">1단계 기록 완료 · hook 10개(기록 9 + ledger-guard) · 스킬 2개(/declare, /ledger) · 0.1.0 공개</div>
+      <div class="now">2단계 스펙 시작 · 2-1 케이스 파일 계약(lib/spec.js) · 1단계(기록)는 0.1.0으로 공개됨</div>
       <div class="k">다음 작업</div>
-      <div>2단계 스펙. 통과 기준(케이스 목록)은 사람이 확정하고 테스트는 AI가 쓴다(P13, P14). <code>/spec</code>, <code>case-capture</code>, <code>spec-guard</code>, <code>case-coverage</code>.</div>
+      <div>2-2 <code>spec-guard</code>. 순서와 흐름은 아래 4b 참고. 통과 기준(케이스 목록)은 사람이 확정하고 테스트는 AI가 쓴다(P13, P14).</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
@@ -338,6 +338,49 @@ sequenceDiagram
       </div>
       <figcaption>"B안을 골랐다"는 사실로만 남고 이유 칸은 비어 있습니다. AI가 그 칸을 채우려 하면 막힙니다. 비어 있는 이유는 리뷰에서 사람에게 묻습니다(P2, P10).</figcaption>
     </figure>
+  </section>
+
+  <section>
+    <div class="prose"><div class="eyebrow">4b · 2단계</div><h2>스펙 한 바퀴: 기준은 사람이, 테스트는 AI가</h2></div>
+    <figure>
+      <div class="sheet">
+<pre class="mermaid">
+sequenceDiagram
+  actor H as 사람
+  participant S as /spec 스킬
+  participant K as hooks
+  participant P as proposals.md
+  participant C as cases.md
+  participant A as case-coverage<br/>(별도 컨텍스트)
+  H->>S: /spec coupon-expiry
+  S->>P: 케이스 초안 · 빠진 케이스 · 모호한 조건 + 근거
+  S->>H: AskUserQuestion · 확정할 케이스 고르기
+  H->>S: C1, C3 + 직접 쓴 케이스
+  S-->>K: PostToolUse(AskUserQuestion)
+  K->>C: case-capture · 고른 문장 그대로 + 직접 쓴 문장
+  S->>K: PreToolUse · Edit cases.md
+  K--xS: spec-guard · 차단
+  Note over S,C: AI가 cases.md를 읽고 테스트를 쓴다 · 이름 = "C1: 문장"
+  S->>A: 케이스 목록 + 테스트 파일
+  A-->>S: 짝 없는 케이스 · 찾아본 것과 근거
+  S->>H: 짝 없는 케이스, 구현 중 배운 것 → 다시 확정할지
+</pre>
+      </div>
+      <figcaption>AI는 제안(proposals.md)까지만 씁니다. 확정 케이스(cases.md)에는 사람이 고르거나 직접 쓴 문장만 hook을 거쳐 들어갑니다. 구현 중에 배운 것은 다시 사람의 확정으로 돌아갑니다(P13, P14).</figcaption>
+    </figure>
+    <div class="prose">
+      <table>
+        <thead><tr><th>순서</th><th>컴포넌트</th><th>하는 일</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td>2-1</td><td class="mono">lib/spec.js</td><td>cases.md의 위치와 형식(계약), 읽기와 덧붙이기</td><td>지금</td></tr>
+          <tr><td>2-2</td><td class="mono">spec-guard</td><td>AI의 cases.md 쓰기를 막는다</td><td>다음</td></tr>
+          <tr><td>2-3</td><td class="mono">case-capture</td><td>사람이 고르거나 쓴 케이스를 cases.md에 옮긴다</td><td></td></tr>
+          <tr><td>2-4</td><td class="mono">/spec</td><td>초안과 빠진 케이스를 근거와 함께 제안하고 확정을 묻는다</td><td></td></tr>
+          <tr><td>2-5</td><td class="mono">case-coverage</td><td>케이스와 테스트의 짝을 확인한다</td><td></td></tr>
+          <tr><td>2-6</td><td class="mono">test-as-doc</td><td>테스트 이름, 도메인 어휘, 설명 없는 숫자를 확인한다</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section>

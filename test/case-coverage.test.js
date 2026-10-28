@@ -33,11 +33,12 @@ test("CV2: 경계 — 테스트를 실행하지 않고, 고치지 않고, 새 �
   for (const rule of [/실행하지 않/, /고치지 않/, /새 케이스를 제안하지 않/, /품질.*판정하지 않/, /사람에게 묻지 않/]) assert.match(boundary, rule);
 });
 
-test("CV3: 반환 형식은 찾아본 것, 케이스마다 네 가지 상태와 근거(파일:줄), 케이스에 없는 테스트, 사람에게 물을 것을 담고 '문제없음'만은 위반이다", () => {
+test("CV3: 반환 형식은 찾아본 것(상대 경로), 케이스마다 네 가지 상태와 근거(파일:줄), 케이스에 없는 테스트, 사람에게 물을 것을 담고 '문제없음'만은 위반이다", () => {
   // 반환 형식은 마지막 섹션이고, 예시 코드 블록 안에도 "## " 줄이 있어 끝까지 읽는다.
   const format = agent.body.slice(agent.body.indexOf("## 반환 형식"));
   assert.notEqual(agent.body.indexOf("## 반환 형식"), -1);
   assert.match(format, /찾아본 것/);
+  assert.match(format, /상대 경로/);
   for (const status of ["짝 있음", "짝 없음", "단언이 다름", "문장이 다름"]) assert.match(format, new RegExp(status));
   assert.match(format, /파일:줄/);
   assert.match(format, /케이스에 없는 테스트/);

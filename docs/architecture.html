@@ -117,14 +117,15 @@ tr.later td { color: var(--muted); }
       <div class="k">최종 목적지</div>
       <div>팀원 각자의 AI 결과물이 수렴한다. 결정은 대화 밖에 있고, 가이드에는 검증된 판단만 있고, 리뷰는 과정까지 본다.</div>
       <div class="k">지금 단계</div>
-      <div class="now">0.2.0 · 1단계(기록)와 2단계(스펙) 완료 · 2-1~2-6 모두 완료</div>
+      <div class="now">3단계 리뷰 · 3-1 기록 공유본 완료(share, share-guard, share-run-guard) · 0.2.0까지 공개됨</div>
       <div class="k">다음 작업</div>
-      <div>MVP(1+2단계) 범위 안의 작업은 끝났습니다. 다음 범위는 사람이 정합니다. 스펙 한 바퀴의 흐름은 아래 4b 참고.</div>
+      <div>3-2 <code>/pr-context</code>: 공유본 링크, ⚑ 개입 지점, 이유가 빈 선택, 확정 케이스를 PR 본문 초안에 모은다. 작성자 설명 칸(의도, 장단점, 자신 없는 곳)은 사람이 채운다. 그다음 3-3 <code>independent-reviewer</code>.</div>
       <div class="k">이 방향이 초래할 수 있는 것</div>
       <div>
         <ul>
           <li>hook이 매 프롬프트마다 돈다. 일이 하나뿐이고 파일에 덧붙이기만 하므로 지연은 작아야 한다. 단계마다 실측한다.</li>
-          <li>guard는 <code>Write</code>/<code>Edit</code>만 본다. <code>Bash</code>로 파일에 쓰는 우회는 막지 못한다.</li>
+          <li>파일 guard는 <code>Write</code>/<code>Edit</code>만 본다. <code>Bash</code>로 파일에 쓰는 우회는 막지 못한다. <code>share-run-guard</code>는 Bash 명령의 문자열 검사라 작정한 우회(변수 조합, 복사 뒤 실행)는 막지 못한다.</li>
+          <li>공유본은 커밋된다. 한 번 push하면 되돌리기 어렵다. 그래서 입력 원문은 사람이 번호로 고른 턴에만 넣고, 토큰처럼 보이는 문자열이 있으면 쓰지 않는다.</li>
           <li>Claude Code가 hook 입력의 <code>source</code>를 비워 보내는 동안에는(2.1.311 <code>-p</code>에서 확인), 기계가 넣은 턴을 사람의 의도와 구분하지 못한다. 알려진 빈틈으로 README에 적어 둔다.</li>
           <li><code>why:</code>를 잊으면 의도 칸이 비어 남는다. 일부러 그렇게 둔다. 빈 칸이 리뷰의 질문이 된다(P10).</li>
         </ul>
@@ -136,10 +137,10 @@ tr.later td { color: var(--muted); }
     <div class="prose"><div class="eyebrow">1 · 로드맵</div><h2>목적지까지의 단계</h2></div>
     <figure>
       <div class="sheet">
-        <svg viewBox="0 0 940 190" role="img" aria-label="0단계 원칙은 완료, 지금은 1단계 기록. MVP는 1단계 기록과 2단계 스펙. 3 리뷰, 4 승격, 5 팀과 계약이 이후 단계.">
+        <svg viewBox="0 0 940 190" role="img" aria-label="0 원칙, 1 기록, 2 스펙은 완료(MVP, 0.2.0). 지금은 3단계 리뷰. 4 승격, 5 팀과 계약이 이후 단계.">
           <defs><marker id="r-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk" d="M0 0L10 5L0 10z"/></marker></defs>
           <path class="ln" d="M166 46V34H458V46"/>
-          <text x="312" y="24" text-anchor="middle" class="ttl">MVP (제안)</text>
+          <text x="312" y="24" text-anchor="middle" class="ttl">MVP ✓ 0.2.0</text>
 
           <rect class="bx-strong" x="10" y="56" width="136" height="72" rx="5"/>
           <text x="22" y="84" class="ttl">0 원칙 ✓</text><text x="22" y="106" class="sub">PRINCIPLES.md</text>
@@ -147,11 +148,11 @@ tr.later td { color: var(--muted); }
           <rect class="bx-strong" x="166" y="56" width="136" height="72" rx="5"/>
           <text x="178" y="84" class="ttl">1 기록 ✓</text><text x="178" y="106" class="sub">사실대로 남는다</text>
 
-          <rect class="bx-h" x="322" y="56" width="136" height="72" rx="5"/>
-          <text x="334" y="84" class="ttl">2 스펙</text><text x="334" y="106" class="sub">기준은 사람이</text>
+          <rect class="bx-strong" x="322" y="56" width="136" height="72" rx="5"/>
+          <text x="334" y="84" class="ttl">2 스펙 ✓</text><text x="334" y="106" class="sub">기준은 사람이</text>
 
-          <rect class="bx-later" x="478" y="56" width="136" height="72" rx="5"/>
-          <text x="490" y="84" class="ttl later">3 리뷰</text><text x="490" y="106" class="sub">과정까지 리뷰</text>
+          <rect class="bx-h" x="478" y="56" width="136" height="72" rx="5"/>
+          <text x="490" y="84" class="ttl">3 리뷰</text><text x="490" y="106" class="sub">과정까지 리뷰</text>
 
           <rect class="bx-later" x="634" y="56" width="136" height="72" rx="5"/>
           <text x="646" y="84" class="ttl later">4 승격</text><text x="646" y="106" class="sub">검증된 것만 가이드</text>
@@ -165,11 +166,11 @@ tr.later td { color: var(--muted); }
           <line class="ln" x1="614" y1="92" x2="632" y2="92" marker-end="url(#r-a)"/>
           <line class="ln" x1="770" y1="92" x2="788" y2="92" marker-end="url(#r-a)"/>
 
-          <polygon class="h" points="390,138 383,151 397,151"/>
-          <text x="390" y="172" text-anchor="middle" class="h" style="font-weight:500">다음: 2단계 스펙</text>
+          <polygon class="h" points="546,138 539,151 553,151"/>
+          <text x="546" y="172" text-anchor="middle" class="h" style="font-weight:500">지금: 3단계 리뷰</text>
         </svg>
       </div>
-      <figcaption>MVP를 1단계(기록)와 2단계(스펙)로 묶자고 제안합니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다.</figcaption>
+      <figcaption>MVP는 1단계(기록)와 2단계(스펙)였고 0.2.0으로 공개했습니다. 글의 두 가지 소유권, 즉 의도(P2·P3)와 통과 기준(P14)이 둘 다 사람에게 있어야 쓸모가 생기기 때문입니다. 3단계는 리뷰어가 그 기록을 볼 수 있게 하는 데서 시작합니다(P10).</figcaption>
     </figure>
   </section>
 
@@ -460,6 +461,7 @@ sequenceDiagram
           <tr><td><code>spec/&lt;작업&gt;/cases.md</code></td><td>확정된 케이스 목록</td><td>사람의 답을 hook이 옮김</td><td><span class="pill b">spec-guard</span></td></tr>
           <tr><td><code>spec/&lt;작업&gt;/proposals.md</code></td><td>빠진 케이스, 모호한 조건과 근거</td><td>AI</td><td>없음 (제안일 뿐)</td></tr>
           <tr><td>테스트 코드</td><td>케이스와 하나씩 짝지은 테스트</td><td>AI</td><td><span class="pill">case-coverage</span> 가 짝 없는 케이스를 찾음</td></tr>
+          <tr><td><code>shared/&lt;세션&gt;.md</code></td><td>리뷰어에게 보일 사실. 입력 원문은 사람이 번호로 고른 턴에만. AI의 말과 위임 원문은 없음</td><td>스크립트만 (<code>/share</code>에 사람이 준 번호로)</td><td><span class="pill b">share-guard</span> <span class="pill b">share-run-guard</span></td></tr>
           <tr class="later"><td><code>guides/</code></td><td>승격된 가이드 (조건 + 출처 기록 포함)</td><td>사람이 고른 후보만</td><td>4단계에서 정함</td></tr>
         </tbody>
       </table>
@@ -489,7 +491,10 @@ sequenceDiagram
           <tr class="st2"><td class="mono">/spec</td><td>스킬</td><td>케이스 초안과 빠진 케이스(근거 포함)를 제안하고 사람의 확정을 받는다</td><td>P13 P9</td><td>2</td></tr>
           <tr class="st2"><td class="mono">case-coverage</td><td>에이전트</td><td>케이스와 테스트의 짝을 확인하고 짝 없는 케이스를 돌려준다</td><td>P14 P8 P12</td><td>2</td></tr>
           <tr class="st2"><td class="mono">test-as-doc</td><td>에이전트</td><td>테스트 이름, 도메인 어휘, 설명 없는 숫자를 확인한다</td><td>P14 P9</td><td>2</td></tr>
-          <tr class="later"><td class="mono">/pr-context</td><td>스킬</td><td>PR에 기록 링크와 개입 지점을 넣는다</td><td>P10</td><td>3</td></tr>
+          <tr><td class="mono">/share</td><td>스킬</td><td>기록에서 사실만 뽑아 커밋되는 공유본을 만든다. 원문은 사람이 고른 턴만</td><td>P10 P1 P0</td><td>3</td></tr>
+          <tr><td class="mono">share-guard</td><td>hook · PreToolUse(Write, Edit)</td><td>AI가 공유본을 쓰려 하면 막는다</td><td>P10 P7</td><td>3</td></tr>
+          <tr><td class="mono">share-run-guard</td><td>hook · PreToolUse(Bash)</td><td>AI가 공유본 스크립트를 직접 실행해 공개할 턴을 대신 고르려 하면 막는다</td><td>P0 P10 P7</td><td>3</td></tr>
+          <tr class="later"><td class="mono">/pr-context</td><td>스킬</td><td>공유본 링크, 개입 지점, 이유가 빈 선택을 PR 본문 초안에 모은다. 작성자 설명 칸은 비워 둔다</td><td>P10 P3</td><td>3</td></tr>
           <tr class="later"><td class="mono">candidate-scout · /candidates · /promote</td><td>에이전트 · 스킬</td><td>후보 추출 → 사람 선택 → 조건과 출처를 붙여 승격</td><td>P4 P5</td><td>4</td></tr>
           <tr class="later"><td class="mono">independent-reviewer</td><td>에이전트</td><td>지시 매몰과 증거 누락을 별도 컨텍스트에서 평가한다</td><td>P8 P9</td><td>3</td></tr>
         </tbody>

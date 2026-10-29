@@ -102,3 +102,66 @@ export function sharedDocument({ sessionId, summary, picked, sections }) {
   ];
   return `${[...header, ...sections.flatMap((section) => ["", section])].join("\n")}\n`;
 }
+
+/**
+ * @typedef {{ header: string, chosen: string, rejected: string, ownAnswer: string | null, reason: string }} SharedChoice
+ * @typedef {{ number: number, at: string, machine: boolean, intents: string[], choices: SharedChoice[], interrupts: string[], edits: string[] }} SharedTurn
+ */
+
+const TURN_HEADING = /^## (\d+)\. \[([^\]]*)\]( — (.*))?$/;
+/** turnSection이 쓰는 줄 중 사실로 읽지 않아도 되는 것. 알아보기만 하고 넘어간다. */
+const KNOWN_LINE = /^- (스킬|에이전트|막힌 쓰기): /;
+
+/**
+ * sharedDocument가 쓴 공유본을 다시 읽는다. 공유본은 사람이 고칠 수 있으므로 형식에 맞지 않는 줄은 추측하지 않고 수만 센다.
+ * @param {string} markdown
+ * @returns {{ turns: SharedTurn[], unreadable: number }}
+ */
+export function readShared(markdown) {
+  /** @type {SharedTurn[]} */
+  const turns = [];
+  let unreadable = 0;
+  /** @type {string | null} 원문 코드 블록 안이면 그 펜스 */
+  let fence = null;
+  for (const line of markdown.split("\n")) {
+    const turn = turns.at(-1);
+    if (fence !== null) {
+      if (line === fence) fence = null;
+      continue;
+    }
+    const heading = line.match(TURN_HEADING);
+    if (heading) {
+      turns.push({ number: Number(heading[1]), at: heading[2], machine: heading[4] === "기계가 넣은 형식", intents: [], choices: [], interrupts: [], edits: [] });
+      continue;
+    }
+    // 첫 턴 앞은 머리말이다. 빈 줄과 앞 항목의 이어지는 줄("  ")은 형식대로다.
+    if (!turn || line.trim() === "" || line.startsWith("  ")) continue;
+    const opening = line.match(/^(`{3,})text$/);
+    if (opening) fence = opening[1];
+    else if (line.startsWith("- 의도: ")) turn.intents.push(line.slice("- 의도: ".length));
+    else if (line.startsWith("- ⚑ ✋ 중단 (") && line.endsWith(")")) turn.interrupts.push(line.slice("- ⚑ ✋ 중단 (".length, -1));
+    else if (line.startsWith("- 바꾼 파일: ")) turn.edits.push(...line.slice("- 바꾼 파일: ".length).split(", "));
+    else if (line.startsWith("- ⚑ 선택 「") && line.includes("」")) turn.choices.push(readChoice(line));
+    else if (!KNOWN_LINE.test(line)) unreadable++;
+  }
+  return { turns, unreadable };
+}
+
+/** @param {string} line "- ⚑ 선택 「제목」 · 질문: … · 고른 것: … · 이유: …" */
+function readChoice(line) {
+  const header = line.slice("- ⚑ 선택 「".length, line.indexOf("」"));
+  /** @type {Map<string, string>} */
+  const fields = new Map();
+  for (const part of line.slice(line.indexOf("」") + 1).split(" · ")) {
+    const colon = part.indexOf(": ");
+    if (colon !== -1) fields.set(part.slice(0, colon).trim(), part.slice(colon + 2));
+  }
+  const ownAnswer = fields.get("직접 쓴 답");
+  return {
+    header,
+    chosen: fields.get("고른 것") ?? "없음",
+    rejected: fields.get("버린 것") ?? "없음",
+    ownAnswer: ownAnswer === undefined ? null : ownAnswer,
+    reason: fields.get("이유") ?? "(비어 있음)",
+  };
+}
